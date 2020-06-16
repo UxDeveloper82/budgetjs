@@ -1,5 +1,4 @@
 var budgetController = (function() {
-
    var Expense = function(id, description, value) {
       this.id = id;
       this.description = description;
@@ -29,7 +28,6 @@ var budgetController = (function() {
         budget: 0,
         percentage: -1
   };
-
   return {
       addItem: function (type, des, val) {
         var newItem, ID;  
@@ -84,7 +82,12 @@ var DOMStrings = {
     inputValue: '.add__value',
     inputBtn: '.add__btn',
     incomeContainer: '.income__list',
-    expensesContainer: '.expenses__list'
+    expensesContainer: '.expenses__list',
+    budgetLabel: '.budget__value',
+    incomeLabel:'.budget__income--value',
+    expensesLabel:'.budget__expenses--value',
+    percentageLabel: '.budget__expenses--percentage'
+
 }
   return {
       getInput: function() {
@@ -97,7 +100,6 @@ var DOMStrings = {
 
        addListItem: function(obj, type) {
            var html, newHtml, element;
-           
             // create html string with placeholder text
             if(type === 'inc'){
                 element = DOMStrings.incomeContainer;
@@ -107,8 +109,6 @@ var DOMStrings = {
                 element = DOMStrings.expensesContainer;
                 html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
-
-        
             //replace the placeholder text with some actual data
              newHtml = html.replace('%id%', obj.id);
              newHtml = newHtml.replace('%description%', obj.description);
@@ -128,6 +128,14 @@ var DOMStrings = {
            });
            fieldsArr[0].focus();
        },
+
+       displayBudget: function(obj) {
+          document.querySelector(DOMStrings.budgetLabel).textContent = obj.budget;
+          document.querySelector(DOMStrings.incomeLabel).textContent = obj.totalInc;
+          document.querySelector(DOMStrings.expensesLabel).textContent = obj.totalExp;
+          document.querySelector(DOMStrings.percentageLabel).textContent = obj.percentage;
+
+       },
         getDOMstrings: function() {
             return DOMStrings;
         }
@@ -135,7 +143,6 @@ var DOMStrings = {
 })();
 
 var controller = (function(budgetCtrl, UICtrl){
- 
     var setupEventListeners = function() {
         var DOM = UICtrl.getDOMstrings();
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
@@ -145,14 +152,13 @@ var controller = (function(budgetCtrl, UICtrl){
             }
         });
     };
-
     var updateBudget =  function() {
          //1.Calculate the budget 
          budgetCtrl.calculateBudget();
          //2.return the budget
         var budget = budgetCtrl.getBudget();
         //3.Display the budget on the UI
-        console.log(budget);
+        UICtrl.displayBudget(budget);
     };
 
     var ctrlAddItem = function() {
@@ -170,7 +176,6 @@ var controller = (function(budgetCtrl, UICtrl){
         //5. Calculate and update budget
         updateBudget();
         }
-
     }
     return {
         init: function() {
